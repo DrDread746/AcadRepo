@@ -144,7 +144,7 @@ router.get('/analytics', async (req, res) => {
 // Get all subjects
 router.get('/subjects', async (req, res) => {
   try {
-    const { semester, regulation } = req.query;
+    const { semester, regulation, branch } = req.query;
     
     let query = 'SELECT * FROM subjects WHERE 1=1';
     const params = [];
@@ -159,6 +159,12 @@ router.get('/subjects', async (req, res) => {
     if (regulation) {
       query += ` AND regulation = $${paramIndex}`;
       params.push(regulation);
+      paramIndex++;
+    }
+
+    if (branch) {
+      query += ` AND branch = $${paramIndex}`;
+      params.push(branch);
       paramIndex++;
     }
 
