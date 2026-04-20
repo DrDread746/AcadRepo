@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import resourceRoutes from './routes/resources.js';
 import adminRoutes from './routes/admin.js';
 import researchRoutes from './routes/research.js';
+import reportRoutes from './routes/reports.js';
 dotenv.config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -27,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/research', researchRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Start server
 app.listen(PORT, () => {

@@ -12,6 +12,12 @@ export default function Dashboard() {
   const [selectedSubject, setSelectedSubject] = useState('')
   const [selectedType, setSelectedType] = useState('')
   const [loading, setLoading] = useState(true)
+  const [previewResource, setPreviewResource] = useState(null)
+  const [showPreview, setShowPreview] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportResource, setReportResource] = useState(null)
+  const [reportForm, setReportForm] = useState({ issue_type: 'broken_link', description: '' })
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     fetchStats()
@@ -92,15 +98,57 @@ export default function Dashboard() {
   }
 
   const handleDownload = (resource) => {
-    window.open(resource.file_url, '_blank')
+    const url = resource.file_path ? `http://localhost:5001${resource.file_path}` : resource.file_url
+    window.open(url, '_blank')
   }
 
   const handlePreview = (resource) => {
-    window.open(resource.file_url, '_blank')
+    setPreviewResource(resource)
+    setShowPreview(true)
+  }
+
+  const getPreviewUrl = (resource) => {
+    if (resource.file_path) {
+      return `http://localhost:5001${resource.file_path}`
+    }
+    return resource.file_url
   }
 
   const handleReport = (resource) => {
-    alert('Report functionality coming soon for: ' + resource.title)
+    setReportResource(resource)
+    setReportForm({ issue_type: 'broken_link', description: '' })
+    setShowReportModal(true)
+  }
+
+  const submitReport = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await fetch('http://localhost:5001/api/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          resource_id: reportResource.id,
+          issue_type: reportForm.issue_type,
+          description: reportForm.description
+        })
+      })
+
+      if (response.ok) {
+        alert('Report submitted successfully!')
+        setShowReportModal(false)
+        setReportResource(null)
+        setReportForm({ issue_type: 'broken_link', description: '' })
+      } else {
+        const data = await response.json()
+        alert('Error: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Report error:', error)
+      alert('Report submission failed')
+    }
   }
 
   const semesters = [...new Set(subjects.map(s => s.semester))].sort((a, b) => a - b)
@@ -331,6 +379,100 @@ export default function Dashboard() {
                   <p className="text-gray-500 text-xs">Posted by {announcement.created_by_name}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* PDF Preview Modal */}
+        {showPreview && previewResource && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 truncate flex-1">{previewResource.title}</h3>
+                <button
+                  onClick={() => {
+                    setShowPreview(false)
+                    setPreviewResource(null)
+                  }}
+                  className="ml-4 text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <iframe
+                  src={getPreviewUrl(previewResource)}
+                  className="w-full h-full"
+                  title="PDF Preview"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Report Modal */}
+        {showReportModal && reportResource && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg w-full max-w-md">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800">Report Resource</h3>
+                <button
+                  onClick={() => {
+                    setShowReportModal(false)
+                    setReportResource(null)
+                  }}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <form onSubmit={submitReport} className="p-4 space-y-4">
+                <div>
+                  <label className="block text-gray-700 mb-2 font-medium">Resource</label>
+                  <div className="text-gray-800 font-medium">{reportResource.title}</div>
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2 font-medium">Issue Type</label>
+                  <select
+                    value={reportForm.issue_type}
+                    onChange={(e) => setReportForm({...reportForm, issue_type: e.target.value})}
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary"
+                  >
+                    <option value="broken_link">Broken Link</option>
+                    <option value="inaccurate">Inaccurate Content</option>
+                    <option value="inappropriate">Inappropriate Content</option>
+                    <option value="copyright">Copyright Issue</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2 font-medium">Description</label>
+                  <textarea
+                    value={reportForm.description}
+                    onChange={(e) => setReportForm({...reportForm, description: e.target.value})}
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary h-24"
+                    placeholder="Please provide more details about the issue..."
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-medium"
+                  >
+                    Submit Report
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReportModal(false)
+                      setReportResource(null)
+                    }}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

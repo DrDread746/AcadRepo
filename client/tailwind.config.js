@@ -8,10 +8,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#ffffff',
-        surface: '#f8f9fa',
-        primary: '#4a90a4',
-        'primary-hover': '#3a7a8e',
+        background: '#f5f0e8', // Light woody background
+        surface: '#e8e0d5', // Woody surface color
+        primary: '#8b5a2b', // Wood brown primary
+        'primary-hover': '#6d4520', // Darker wood brown for hover
       }
     },
   },

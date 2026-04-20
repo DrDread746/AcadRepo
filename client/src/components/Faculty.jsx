@@ -12,6 +12,7 @@ export default function Faculty() {
     title: '',
     type: 'PYQ',
     subject_id: '',
+    file: null,
     file_url: '',
     verified: false
   })
@@ -87,19 +88,30 @@ export default function Faculty() {
   const handleUpload = async (e) => {
     e.preventDefault()
     try {
+      const formData = new FormData()
+      formData.append('title', uploadForm.title)
+      formData.append('type', uploadForm.type)
+      formData.append('subject_id', uploadForm.subject_id)
+      formData.append('verified', uploadForm.verified)
+      
+      if (uploadForm.file) {
+        formData.append('file', uploadForm.file)
+      } else if (uploadForm.file_url) {
+        formData.append('file_url', uploadForm.file_url)
+      }
+
       const response = await fetch('http://localhost:5001/api/resources', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(uploadForm)
+        body: formData
       })
 
       if (response.ok) {
         alert('Resource uploaded successfully!')
         setShowUploadForm(false)
-        setUploadForm({ title: '', type: 'PYQ', subject_id: '', file_url: '', verified: false })
+        setUploadForm({ title: '', type: 'PYQ', subject_id: '', file: null, file_url: '', verified: false })
         fetchResources()
         fetchStats()
       } else {
@@ -321,14 +333,23 @@ export default function Faculty() {
                 </div>
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">File URL</label>
+                <label className="block text-gray-700 mb-2 font-medium">Upload PDF File</label>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => setUploadForm({...uploadForm, file: e.target.files[0], file_url: ''})}
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div className="text-center text-gray-500 text-sm">or</div>
+              <div>
+                <label className="block text-gray-700 mb-2 font-medium">File URL (optional)</label>
                 <input
                   type="url"
                   value={uploadForm.file_url}
-                  onChange={(e) => setUploadForm({...uploadForm, file_url: e.target.value})}
+                  onChange={(e) => setUploadForm({...uploadForm, file_url: e.target.value, file: null})}
                   className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary"
                   placeholder="https://example.com/file.pdf"
-                  required
                 />
               </div>
               <div className="flex items-center">

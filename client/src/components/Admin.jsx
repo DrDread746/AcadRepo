@@ -4,6 +4,7 @@ export default function Admin() {
   const user = JSON.parse(localStorage.getItem('user'))
   const [users, setUsers] = useState([])
   const [announcements, setAnnouncements] = useState([])
+  const [reports, setReports] = useState([])
   const [analytics, setAnalytics] = useState({ mostDownloaded: [], recentUploads: [] })
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
   const [announcementForm, setAnnouncementForm] = useState({
@@ -17,6 +18,7 @@ export default function Admin() {
     fetchUsers()
     fetchAnnouncements()
     fetchAnalytics()
+    fetchReports()
   }, [])
 
   const fetchAnalytics = async () => {
@@ -53,6 +55,52 @@ export default function Admin() {
       setAnnouncements(data)
     } catch (error) {
       console.error('Error fetching announcements:', error)
+    }
+  }
+
+  const fetchReports = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/reports', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await response.json()
+      setReports(data)
+    } catch (error) {
+      console.error('Error fetching reports:', error)
+    }
+  }
+
+  const handleResolveReport = async (reportId) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/reports/${reportId}/resolve`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (response.ok) {
+        fetchReports()
+      }
+    } catch (error) {
+      console.error('Resolve report error:', error)
+    }
+  }
+
+  const handleDismissReport = async (reportId) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/reports/${reportId}/dismiss`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (response.ok) {
+        fetchReports()
+      }
+    } catch (error) {
+      console.error('Dismiss report error:', error)
     }
   }
 
@@ -280,6 +328,73 @@ export default function Admin() {
             </form>
           </div>
         )}
+
+        {/* Reports Management */}
+        <div className="bg-surface p-6 rounded border border-gray-200 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl">⚠️</span>
+            Reports Management
+          </h2>
+          
+          {reports.length === 0 ? (
+            <div className="text-gray-600 text-center py-8">No reports yet</div>
+          ) : (
+            <div className="space-y-3">
+              {reports.map(report => (
+                <div key={report.id} className="bg-white p-4 rounded border border-gray-200">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-base font-semibold text-gray-800 mb-1">{report.resource_title}</h3>
+                      <p className="text-gray-600 text-sm mb-2">
+                        <span className="font-medium">Subject:</span> {report.subject_name} | 
+                        <span className="font-medium"> Issue:</span> {report.issue_type.replace('_', ' ')}
+                      </p>
+                      {report.description && (
+                        <p className="text-gray-600 text-sm mb-2">{report.description}</p>
+                      )}
+                      <p className="text-gray-500 text-xs">
+                        Reported by {report.reported_by_name} on {new Date(report.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="ml-4">
+                      {report.status === 'pending' && (
+                        <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded">
+                          Pending
+                        </span>
+                      )}
+                      {report.status === 'resolved' && (
+                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
+                          Resolved
+                        </span>
+                      )}
+                      {report.status === 'dismissed' && (
+                        <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                          Dismissed
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {report.status === 'pending' && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleResolveReport(report.id)}
+                        className="bg-green-100 hover:bg-green-200 text-green-700 py-2 px-4 rounded text-sm font-medium"
+                      >
+                        Resolve
+                      </button>
+                      <button
+                        onClick={() => handleDismissReport(report.id)}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded text-sm font-medium"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* User Management */}
         <div className="bg-surface p-6 rounded border border-gray-200 mb-8">

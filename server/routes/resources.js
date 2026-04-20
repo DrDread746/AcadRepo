@@ -1,22 +1,66 @@
 import express from 'express';
 import pool from '../db.js';
 import { auth, authorize } from '../middleware/auth.js';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /pdf/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed'));
+    }
+  },
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
 // Upload new resource (faculty/admin only)
-router.post('/', auth, authorize('faculty', 'admin'), async (req, res) => {
+router.post('/', auth, authorize('faculty', 'admin'), upload.single('file'), async (req, res) => {
   try {
     const { title, type, subject_id, file_url, verified } = req.body;
     const uploaded_by = req.user.id;
 
-    if (!title || !type || !subject_id || !file_url) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (!title || !type || !subject_id) {
+      return res.status(400).json({ error: 'Title, type, and subject_id are required' });
     }
 
+    if (!req.file && !file_url) {
+      return res.status(400).json({ error: 'Either a file or URL is required' });
+    }
+
+    const file_path = req.file ? `/uploads/${req.file.filename}` : null;
+
     const result = await pool.query(
-      'INSERT INTO resources (title, type, subject_id, file_url, uploaded_by, verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [title, type, subject_id, file_url, uploaded_by, verified || false]
+      'INSERT INTO resources (title, type, subject_id, file_url, file_path, uploaded_by, verified) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [title, type, subject_id, file_url || null, file_path, uploaded_by, verified || false]
     );
 
     res.status(201).json(result.rows[0]);
