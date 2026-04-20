@@ -8,6 +8,7 @@ export default function Dashboard() {
   const [announcements, setAnnouncements] = useState([])
   const [analytics, setAnalytics] = useState({ mostDownloaded: [], recentUploads: [] })
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedBranch, setSelectedBranch] = useState('')
   const [selectedSemester, setSelectedSemester] = useState('')
   const [selectedSubject, setSelectedSubject] = useState('')
   const [selectedType, setSelectedType] = useState('')
@@ -25,11 +26,11 @@ export default function Dashboard() {
     fetchSubjects()
     fetchAnnouncements()
     fetchAnalytics()
-  }, [])
+  }, [selectedBranch])
 
   useEffect(() => {
     fetchResources()
-  }, [searchTerm, selectedSemester, selectedSubject, selectedType])
+  }, [searchTerm, selectedBranch, selectedSemester, selectedSubject, selectedType])
 
   const fetchStats = async () => {
     try {
@@ -79,7 +80,9 @@ export default function Dashboard() {
 
   const fetchSubjects = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/resources/subjects')
+      const params = new URLSearchParams()
+      if (selectedBranch) params.append('branch', selectedBranch)
+      const response = await fetch(`http://localhost:5001/api/resources/subjects?${params}`)
       const data = await response.json()
       setSubjects(data)
     } catch (error) {
@@ -254,7 +257,7 @@ export default function Dashboard() {
 
         {/* Search and Filters */}
         <div className="bg-surface p-6 rounded border border-gray-200 mb-8">
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-5 gap-4">
             <div className="relative">
               <input
                 type="text"
@@ -265,6 +268,22 @@ export default function Dashboard() {
               />
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
             </div>
+            <select
+              value={selectedBranch}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              className="px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary"
+            >
+              <option value="">All Branches</option>
+              <option value="CS">CS</option>
+              <option value="IT">IT</option>
+              <option value="ECE">Electronics and Telecommunications</option>
+              <option value="EEE">Electronics</option>
+              <option value="EE">Electrical</option>
+              <option value="CE">Civil</option>
+              <option value="ME">Mechanical</option>
+              <option value="TE">Textile</option>
+              <option value="PE">Production</option>
+            </select>
             <select
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
