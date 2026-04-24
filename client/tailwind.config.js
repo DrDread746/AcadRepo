@@ -7,11 +7,14 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
       colors: {
-        background: '#f5f0e8', // Light woody background
-        surface: '#e8e0d5', // Woody surface color
-        primary: '#8b5a2b', // Wood brown primary
-        'primary-hover': '#6d4520', // Darker wood brown for hover
+        background: '#fff1f2',
+        surface: '#ffe4e6',
+        primary: '#e11d48',
+        'primary-hover': '#be123c',
       }
     },
   },

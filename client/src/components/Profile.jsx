@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useToast } from '../context/ToastContext'
 
 export default function Profile() {
+  const { success, error } = useToast()
   const user = JSON.parse(localStorage.getItem('user'))
   const [downloads, setDownloads] = useState([])
   const [showPasswordForm, setShowPasswordForm] = useState(false)
@@ -33,11 +35,11 @@ export default function Profile() {
     }
   }
 
-  const handlePasswordChange = async (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault()
     
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert('Passwords do not match')
+      error('Passwords do not match')
       return
     }
 
@@ -55,16 +57,16 @@ export default function Profile() {
       })
 
       if (response.ok) {
-        alert('Password changed successfully!')
-        setShowPasswordForm(false)
+        success('Password changed successfully!')
         setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+        setShowPasswordForm(false)
       } else {
         const data = await response.json()
-        alert('Error: ' + data.error)
+        error('Error: ' + data.error)
       }
     } catch (error) {
-      console.error('Password change error:', error)
-      alert('Failed to change password')
+      console.error('Change password error:', error)
+      error('Failed to change password')
     }
   }
 

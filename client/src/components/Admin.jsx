@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
+import Skeleton from './Skeleton'
 
 export default function Admin() {
+  const { success, error } = useToast()
+  const { confirm } = useConfirm()
   const user = JSON.parse(localStorage.getItem('user'))
   const [users, setUsers] = useState([])
   const [announcements, setAnnouncements] = useState([])
@@ -105,7 +110,8 @@ export default function Admin() {
   }
 
   const handleDeleteUser = async (userId) => {
-    if (!confirm('Are you sure you want to delete this user?')) return
+    const confirmed = await confirm('Delete User', 'Are you sure you want to delete this user?')
+    if (!confirmed) return
 
     try {
       const response = await fetch(`http://localhost:5001/api/admin/users/${userId}`, {
@@ -116,14 +122,14 @@ export default function Admin() {
       })
 
       if (response.ok) {
-        alert('User deleted successfully!')
+        success('User deleted successfully!')
         fetchUsers()
       } else {
-        alert('Failed to delete user')
+        error('Failed to delete user')
       }
     } catch (error) {
       console.error('Delete user error:', error)
-      alert('Failed to delete user')
+      error('Failed to delete user')
     }
   }
 
@@ -139,14 +145,14 @@ export default function Admin() {
       })
 
       if (response.ok) {
-        alert('Role updated successfully!')
+        success('Role updated successfully!')
         fetchUsers()
       } else {
-        alert('Failed to update role')
+        error('Failed to update role')
       }
     } catch (error) {
       console.error('Update role error:', error)
-      alert('Failed to update role')
+      error('Failed to update role')
     }
   }
 
@@ -163,17 +169,17 @@ export default function Admin() {
       })
 
       if (response.ok) {
-        alert('Announcement created successfully!')
+        success('Announcement created successfully!')
         setShowAnnouncementForm(false)
         setAnnouncementForm({ title: '', content: '' })
         fetchAnnouncements()
       } else {
         const data = await response.json()
-        alert('Error: ' + data.error)
+        error('Error: ' + data.error)
       }
     } catch (error) {
       console.error('Create announcement error:', error)
-      alert('Failed to create announcement')
+      error('Failed to create announcement')
     }
   }
 
@@ -404,7 +410,18 @@ export default function Admin() {
           </h2>
           
           {loading ? (
-            <div className="text-gray-600 text-center py-8">Loading users...</div>
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="bg-white p-4 rounded border border-gray-200 flex items-center justify-between">
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-5 w-1/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-1/4" />
+                  </div>
+                  <Skeleton className="h-8 w-24" />
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
