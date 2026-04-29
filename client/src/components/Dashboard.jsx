@@ -125,35 +125,35 @@ export default function Dashboard() {
     <div className="min-h-screen px-4 py-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="text-gray-600 mb-6">
+        <nav className="text-muted mb-6">
           <a href="/" className="hover:text-primary">Home</a>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Dashboard</span>
+          <span className="mx-2 text-border">/</span>
+          <span className="text-text">Dashboard</span>
         </nav>
 
         {/* Welcome Message */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             Welcome back, {user?.name}!
           </h1>
-          <p className="text-gray-600">Here's what's happening with your resources today.</p>
+          <p className="text-muted">Here's what's happening with your resources today.</p>
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+        <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
           <div className="flex gap-4">
             <div className="relative flex-1">
               <input
                 type="text"
                 placeholder="Search resources..."
-                className="w-full px-4 py-3 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary transition-colors"
+                className="w-full px-4 py-3 pl-10 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary transition-colors"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     window.location.href = '/search'
                   }
                 }}
               />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted">🔍</span>
             </div>
             <a
               href="/search"
@@ -166,76 +166,76 @@ export default function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                 <span className="text-xl">📚</span>
               </div>
-              <div className="text-4xl font-bold text-gray-900">
+              <div className="text-4xl font-bold text-text">
                 {stats.totalResources}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Total Resources</div>
+            <div className="text-muted font-medium">Total Resources</div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                 <span className="text-xl">📥</span>
               </div>
-              <div className="text-4xl font-bold text-gray-900">
+              <div className="text-4xl font-bold text-text">
                 {stats.totalDownloads}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Total Downloads</div>
+            <div className="text-muted font-medium">Total Downloads</div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                 <span className="text-xl">🆕</span>
               </div>
-              <div className="text-4xl font-bold text-gray-900">
+              <div className="text-4xl font-bold text-text">
                 {stats.recentUploads}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Recent Uploads (7 days)</div>
+            <div className="text-muted font-medium">Recent Uploads (7 days)</div>
           </div>
         </div>
 
         {/* Analytics Section */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border">
+            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-xl">🔥</span>
               Most Downloaded
             </h3>
             <div className="space-y-3">
               {analytics.mostDownloaded.slice(0, 5).map((resource, index) => (
-                <div key={resource.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div key={resource.id} className="flex items-center gap-3 p-3 rounded-lg bg-background hover:bg-surface transition-colors">
                   <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-sm">{index + 1}</span>
                   </div>
                   <div className="flex-1">
-                    <div className="text-gray-900 font-medium truncate text-sm">{resource.title}</div>
-                    <div className="text-gray-600 text-xs">{resource.downloads_count} downloads</div>
+                    <div className="text-text font-medium truncate text-sm">{resource.title}</div>
+                    <div className="text-muted text-xs">{resource.downloads_count} downloads</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border">
+            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-xl">📤</span>
               Recently Uploaded
             </h3>
             <div className="space-y-3">
               {analytics.recentUploads.slice(0, 5).map((resource) => (
-                <div key={resource.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div key={resource.id} className="flex items-center gap-3 p-3 rounded-lg bg-background hover:bg-surface transition-colors">
                   <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                     <span className="text-white text-xs">📄</span>
                   </div>
                   <div className="flex-1">
-                    <div className="text-gray-900 font-medium truncate text-sm">{resource.title}</div>
-                    <div className="text-gray-600 text-xs">
+                    <div className="text-text font-medium truncate text-sm">{resource.title}</div>
+                    <div className="text-muted text-xs">
                       {new Date(resource.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -246,8 +246,8 @@ export default function Dashboard() {
         </div>
 
         {/* Resource List */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
+          <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">📖</span>
             Available Resources
           </h2>
@@ -255,7 +255,7 @@ export default function Dashboard() {
           {loading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                <div key={i} className="bg-background p-5 rounded-xl border border-border">
                   <Skeleton className="h-5 w-3/4 mb-3" />
                   <div className="space-y-2 mb-4">
                     <Skeleton className="h-4 w-full" />
@@ -271,39 +271,39 @@ export default function Dashboard() {
               ))}
             </div>
           ) : resources.length === 0 ? (
-            <div className="text-gray-600 text-center py-8">No resources found</div>
+            <div className="text-muted text-center py-8">No resources found</div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {resources.map(resource => (
-                <div key={resource.id} className="bg-gray-50 p-5 rounded-xl border border-gray-100 hover:shadow-lg transition-shadow">
+                <div key={resource.id} className="bg-background p-5 rounded-xl border border-border hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-base font-semibold text-gray-900 line-clamp-2 flex-1">{resource.title}</h3>
+                    <h3 className="text-base font-semibold text-text line-clamp-2 flex-1">{resource.title}</h3>
                     {resource.verified && (
-                      <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded ml-2">
+                      <span className="bg-primary/20 text-primary text-xs px-2 py-1 rounded ml-2">
                         ✓ Verified
                       </span>
                     )}
                   </div>
                   
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Subject:</span>
-                      <span className="text-gray-900 font-medium">{resource.subject_name}</span>
+                    <div className="flex items-center text-muted text-sm">
+                      <span className="w-20 text-border">Subject:</span>
+                      <span className="text-text font-medium">{resource.subject_name}</span>
                     </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Type:</span>
-                      <span className="text-gray-900 font-medium capitalize">{resource.type}</span>
+                    <div className="flex items-center text-muted text-sm">
+                      <span className="w-20 text-border">Type:</span>
+                      <span className="text-text font-medium capitalize">{resource.type}</span>
                     </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Downloads:</span>
-                      <span className="text-gray-900 font-medium">{resource.downloads_count}</span>
+                    <div className="flex items-center text-muted text-sm">
+                      <span className="w-20 text-border">Downloads:</span>
+                      <span className="text-text font-medium">{resource.downloads_count}</span>
                     </div>
                   </div>
 
                   <div className="flex gap-2">
                     <button
                       onClick={() => handlePreview(resource)}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      className="flex-1 bg-surface hover:bg-border text-text py-2 px-3 rounded-lg text-sm font-medium transition-colors"
                     >
                       Preview
                     </button>
@@ -315,7 +315,7 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => handleReport(resource)}
-                      className="bg-red-100 hover:bg-red-200 text-red-600 py-2 px-3 rounded-lg text-sm transition-colors"
+                      className="bg-red-500/20 hover:bg-red-500/30 text-red-400 py-2 px-3 rounded-lg text-sm transition-colors"
                       title="Report Issue"
                     >
                       ⚠️
@@ -329,17 +329,17 @@ export default function Dashboard() {
 
         {/* Announcements Section */}
         {announcements.length > 0 && (
-          <div className="bg-surface p-6 rounded border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded border border-border">
+            <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-2xl">📢</span>
               Announcements
             </h2>
             <div className="space-y-3">
               {announcements.map(announcement => (
-                <div key={announcement.id} className="bg-white p-4 rounded border border-gray-200">
-                  <h3 className="text-base font-semibold text-gray-800 mb-2">{announcement.title}</h3>
-                  <p className="text-gray-600 mb-2 text-sm">{announcement.content}</p>
-                  <p className="text-gray-500 text-xs">Posted by {announcement.created_by_name}</p>
+                <div key={announcement.id} className="bg-background p-4 rounded border border-border">
+                  <h3 className="text-base font-semibold text-text mb-2">{announcement.title}</h3>
+                  <p className="text-muted mb-2 text-sm">{announcement.content}</p>
+                  <p className="text-border text-xs">Posted by {announcement.created_by_name}</p>
                 </div>
               ))}
             </div>
@@ -349,15 +349,15 @@ export default function Dashboard() {
         {/* PDF Preview Modal */}
         {showPreview && previewResource && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 truncate flex-1">{previewResource.title}</h3>
+            <div className="bg-surface rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h3 className="text-lg font-semibold text-text truncate flex-1">{previewResource.title}</h3>
                 <button
                   onClick={() => {
                     setShowPreview(false)
                     setPreviewResource(null)
                   }}
-                  className="ml-4 text-gray-500 hover:text-gray-700 text-2xl"
+                  className="ml-4 text-muted hover:text-text text-2xl"
                 >
                   ×
                 </button>

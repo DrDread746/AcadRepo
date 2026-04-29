@@ -33,6 +33,17 @@ export default function Search() {
     return () => clearTimeout(debounceTimer)
   }, [searchTerm, selectedBranch, selectedSemester, selectedSubject, selectedType])
 
+  // Reset semester when branch changes
+  useEffect(() => {
+    setSelectedSemester('')
+    setSelectedSubject('')
+  }, [selectedBranch])
+
+  // Reset subject when semester changes
+  useEffect(() => {
+    setSelectedSubject('')
+  }, [selectedSemester])
+
   const fetchResources = async () => {
     setLoading(true)
     try {
@@ -136,110 +147,194 @@ export default function Search() {
     setResources([])
   }
 
+  // Get unique semesters from filtered subjects
+  const availableSemesters = [...new Set(subjects.map(s => s.semester))].sort((a, b) => a - b)
+
+  // Filter subjects based on selected branch and semester
+  const filteredSubjects = subjects.filter(subject => {
+    if (selectedBranch && subject.branch !== selectedBranch) return false
+    if (selectedSemester && subject.semester !== parseInt(selectedSemester)) return false
+    return true
+  })
+
   return (
     <div className="min-h-screen px-4 py-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="text-gray-600 mb-6">
+        <nav className="text-muted mb-6">
           <a href="/" className="hover:text-primary">Home</a>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-900">Search</span>
+          <span className="mx-2 text-border">/</span>
+          <span className="text-text">Search</span>
         </nav>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             Search Resources
           </h1>
-          <p className="text-gray-600">Find resources by title, subject, branch, semester, or type.</p>
+          <p className="text-muted">Find resources by title, subject, branch, semester, or type.</p>
         </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-          <div className="grid md:grid-cols-5 gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search resources..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary"
-              />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
-            </div>
-            <select
-              value={selectedBranch}
-              onChange={(e) => setSelectedBranch(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary"
-            >
-              <option value="">All Branches</option>
-              <option value="CS">CS</option>
-              <option value="IT">IT</option>
-              <option value="ECE">Electronics and Telecommunications</option>
-              <option value="EEE">Electronics</option>
-              <option value="EE">Electrical</option>
-              <option value="CE">Civil</option>
-              <option value="ME">Mechanical</option>
-              <option value="TE">Textile</option>
-              <option value="PE">Production</option>
-            </select>
-            <select
-              value={selectedSemester}
-              onChange={(e) => setSelectedSemester(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary"
-            >
-              <option value="">All Semesters</option>
-              {semesters.map(sem => (
-                <option key={sem} value={sem}>Semester {sem}</option>
-              ))}
-            </select>
-            <select
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary"
-            >
-              <option value="">All Subjects</option>
-              {subjects.map(subject => (
-                <option key={subject.id} value={subject.id}>{subject.name} ({subject.code})</option>
-              ))}
-            </select>
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-primary"
-            >
-              <option value="">All Types</option>
-              <option value="PYQ">PYQ</option>
-              <option value="notes">Notes</option>
-              <option value="book">Book</option>
-            </select>
+        {/* Search Bar */}
+        <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-6">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search resources by title or subject..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-5 py-3 pl-12 bg-background border border-border rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-lg">🔍</span>
           </div>
-          <button
-            onClick={clearFilters}
-            className="mt-4 text-sm text-gray-600 hover:text-primary underline"
-          >
-            Clear all filters
-          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-text">Filters</h3>
+            <button
+              onClick={clearFilters}
+              className="text-sm text-primary hover:text-primary-hover font-medium transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-muted mb-2">Branch</label>
+              <select
+                value={selectedBranch}
+                onChange={(e) => setSelectedBranch(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+              >
+                <option value="">All Branches</option>
+                <option value="CS">CS</option>
+                <option value="IT">IT</option>
+                <option value="ECE">Electronics and Telecommunications</option>
+                <option value="EEE">Electronics</option>
+                <option value="EE">Electrical</option>
+                <option value="CE">Civil</option>
+                <option value="ME">Mechanical</option>
+                <option value="TE">Textile</option>
+                <option value="PE">Production</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted mb-2">Semester</label>
+              <select
+                value={selectedSemester}
+                onChange={(e) => setSelectedSemester(e.target.value)}
+                disabled={!selectedBranch}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">All Semesters</option>
+                {availableSemesters.map(sem => (
+                  <option key={sem} value={sem}>Semester {sem}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted mb-2">Subject</label>
+              <select
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+                disabled={!selectedBranch || !selectedSemester}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">All Subjects</option>
+                {filteredSubjects.map(subject => (
+                  <option key={subject.id} value={subject.id}>{subject.name} ({subject.code})</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted mb-2">Type</label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+              >
+                <option value="">All Types</option>
+                <option value="PYQ">PYQ</option>
+                <option value="notes">Notes</option>
+                <option value="book">Book</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Active Filters */}
+          {(selectedBranch || selectedSemester || selectedSubject || selectedType) && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex flex-wrap gap-2">
+                {selectedBranch && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                    Branch: {selectedBranch}
+                    <button
+                      onClick={() => setSelectedBranch('')}
+                      className="hover:text-primary-hover ml-1"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {selectedSemester && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                    Semester: {selectedSemester}
+                    <button
+                      onClick={() => setSelectedSemester('')}
+                      className="hover:text-primary-hover ml-1"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {selectedSubject && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                    Subject: {subjects.find(s => s.id === selectedSubject)?.name}
+                    <button
+                      onClick={() => setSelectedSubject('')}
+                      className="hover:text-primary-hover ml-1"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {selectedType && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/20 text-primary rounded-full text-sm font-medium">
+                    Type: {selectedType}
+                    <button
+                      onClick={() => setSelectedType('')}
+                      className="hover:text-primary-hover ml-1"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results */}
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-surface p-6 rounded-xl shadow-lg border border-border">
+          <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">📖</span>
             Search Results
             {resources.length > 0 && (
-              <span className="text-sm font-normal text-gray-600">({resources.length} found)</span>
+              <span className="text-sm font-normal text-muted">({resources.length} found)</span>
             )}
           </h2>
           
           {!searchTerm && !selectedBranch && !selectedSemester && !selectedSubject && !selectedType ? (
-            <div className="text-gray-600 text-center py-8">
+            <div className="text-muted text-center py-8">
               Enter search terms or select filters to find resources
             </div>
           ) : loading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                <div key={i} className="bg-background p-5 rounded-xl border border-border">
                   <Skeleton className="h-5 w-3/4 mb-3" />
                   <div className="space-y-2 mb-4">
                     <Skeleton className="h-4 w-full" />
@@ -255,55 +350,51 @@ export default function Search() {
               ))}
             </div>
           ) : resources.length === 0 ? (
-            <div className="text-gray-600 text-center py-8">No resources found matching your criteria</div>
+            <div className="text-muted text-center py-8">No resources found matching your criteria</div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {resources.map(resource => (
-                <div key={resource.id} className="bg-gray-50 p-5 rounded-xl border border-gray-100 hover:shadow-lg transition-shadow">
+                <div key={resource.id} className="bg-background p-5 rounded-xl border border-border hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-base font-semibold text-gray-900 line-clamp-2 flex-1">{resource.title}</h3>
-                    {resource.verified && (
-                      <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded ml-2">
-                        ✓ Verified
-                      </span>
-                    )}
+                    <span className="px-2 py-1 bg-primary/20 text-primary text-xs font-medium rounded">
+                      {resource.type}
+                    </span>
+                    <span className="text-muted text-xs">
+                      {new Date(resource.created_at).toLocaleDateString()}
+                    </span>
                   </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Subject:</span>
-                      <span className="text-gray-900 font-medium">{resource.subject_name}</span>
+                  <h3 className="text-lg font-semibold text-text mb-2 line-clamp-2">
+                    {resource.title}
+                  </h3>
+                  <p className="text-muted text-sm mb-3">
+                    {resource.subject_name} ({resource.subject_code})
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-muted text-sm">
+                      <span>📥</span>
+                      <span>{resource.downloads_count}</span>
                     </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Type:</span>
-                      <span className="text-gray-900 font-medium capitalize">{resource.type}</span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handlePreview(resource)}
+                        className="text-primary hover:text-primary-hover text-sm font-medium"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => handleDownload(resource)}
+                        className="text-primary hover:text-primary-hover text-sm font-medium"
+                      >
+                        Download
+                      </button>
+                      <button
+                        onClick={() => handleReport(resource)}
+                        className="text-muted hover:text-primary text-sm"
+                        title="Report Issue"
+                      >
+                        ⚠️
+                      </button>
                     </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <span className="w-20 text-gray-500">Downloads:</span>
-                      <span className="text-gray-900 font-medium">{resource.downloads_count}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePreview(resource)}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Preview
-                    </button>
-                    <button
-                      onClick={() => handleDownload(resource)}
-                      className="flex-1 bg-primary hover:bg-primary-hover text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Download
-                    </button>
-                    <button
-                      onClick={() => handleReport(resource)}
-                      className="bg-red-100 hover:bg-red-200 text-red-600 py-2 px-3 rounded-lg text-sm transition-colors"
-                      title="Report Issue"
-                    >
-                      ⚠️
-                    </button>
                   </div>
                 </div>
               ))}

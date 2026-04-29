@@ -11,10 +11,13 @@ export default {
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
-        background: '#fff1f2',
-        surface: '#ffe4e6',
-        primary: '#e11d48',
-        'primary-hover': '#be123c',
+        background: '#F1F5F9',
+        surface: '#FFFFFF',
+        primary: '#2563EB',
+        'primary-hover': '#1D4ED8',
+        text: '#1E293B',
+        muted: '#64748B',
+        border: '#CBD5E1',
       }
     },
   },

@@ -187,91 +187,91 @@ export default function Admin() {
     <div className="min-h-screen px-4 py-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="text-gray-600 mb-6">
+        <nav className="text-muted mb-6">
           <a href="/" className="hover:text-primary">Home</a>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-gray-800">Admin Dashboard</span>
+          <span className="mx-2 text-border">/</span>
+          <span className="text-text">Admin Dashboard</span>
         </nav>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             Welcome back, {user?.name}!
           </h1>
-          <p className="text-gray-600">Manage users, roles, and system announcements.</p>
+          <p className="text-muted">Manage users, roles, and system announcements.</p>
         </div>
 
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-surface p-6 rounded border border-gray-200">
+          <div className="bg-surface p-6 rounded border border-border">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
                 <span className="text-xl">👥</span>
               </div>
-              <div className="text-3xl font-bold text-gray-800">
+              <div className="text-3xl font-bold text-text">
                 {users.length}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Total Users</div>
+            <div className="text-muted font-medium">Total Users</div>
           </div>
-          <div className="bg-surface p-6 rounded border border-gray-200">
+          <div className="bg-surface p-6 rounded border border-border">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
                 <span className="text-xl">🎓</span>
               </div>
-              <div className="text-3xl font-bold text-gray-800">
+              <div className="text-3xl font-bold text-text">
                 {users.filter(u => u.role === 'student').length}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Students</div>
+            <div className="text-muted font-medium">Students</div>
           </div>
-          <div className="bg-surface p-6 rounded border border-gray-200">
+          <div className="bg-surface p-6 rounded border border-border">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-10 bg-primary rounded flex items-center justify-center">
                 <span className="text-xl">👨‍🏫</span>
               </div>
-              <div className="text-3xl font-bold text-gray-800">
+              <div className="text-3xl font-bold text-text">
                 {users.filter(u => u.role === 'faculty').length}
               </div>
             </div>
-            <div className="text-gray-600 font-medium">Faculty</div>
+            <div className="text-muted font-medium">Faculty</div>
           </div>
         </div>
 
         {/* Analytics Section */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-surface p-6 rounded border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded border border-border">
+            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-xl">🔥</span>
               Most Downloaded
             </h3>
             <div className="space-y-3">
               {analytics.mostDownloaded.slice(0, 5).map((resource, index) => (
-                <div key={resource.id} className="flex items-center gap-3 p-3 rounded bg-white border border-gray-200">
+                <div key={resource.id} className="flex items-center gap-3 p-3 rounded bg-background border border-border">
                   <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
                     <span className="text-white font-bold text-xs">{index + 1}</span>
                   </div>
                   <div className="flex-1">
-                    <div className="text-gray-800 font-medium truncate text-sm">{resource.title}</div>
-                    <div className="text-gray-600 text-xs">{resource.downloads_count} downloads</div>
+                    <div className="text-text font-medium truncate text-sm">{resource.title}</div>
+                    <div className="text-muted text-xs">{resource.downloads_count} downloads</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-surface p-6 rounded border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded border border-border">
+            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-xl">📤</span>
               Recently Uploaded
             </h3>
             <div className="space-y-3">
               {analytics.recentUploads.slice(0, 5).map((resource) => (
-                <div key={resource.id} className="flex items-center gap-3 p-3 rounded bg-white border border-gray-200">
+                <div key={resource.id} className="flex items-center gap-3 p-3 rounded bg-background border border-border">
                   <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
                     <span className="text-white text-xs">📄</span>
                   </div>
                   <div className="flex-1">
-                    <div className="text-gray-800 font-medium truncate text-sm">{resource.title}</div>
-                    <div className="text-gray-600 text-xs">
+                    <div className="text-text font-medium truncate text-sm">{resource.title}</div>
+                    <div className="text-muted text-xs">
                       {new Date(resource.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -284,49 +284,49 @@ export default function Admin() {
         {/* Action Button */}
         <button
           onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}
-          className="bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-6 rounded mb-8"
+          className="bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-6 rounded-lg mb-8"
         >
           Create Announcement
         </button>
 
         {/* Announcement Form */}
         {showAnnouncementForm && (
-          <div className="bg-surface p-6 rounded border border-gray-200 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-surface p-6 rounded border border-border mb-8">
+            <h2 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
               <span className="text-xl">📢</span>
               Create Announcement
             </h2>
             <form onSubmit={handleCreateAnnouncement} className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Title</label>
+                <label className="block text-muted mb-2 font-medium">Title</label>
                 <input
                   type="text"
                   value={announcementForm.title}
                   onChange={(e) => setAnnouncementForm({...announcementForm, title: e.target.value})}
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary"
+                  className="w-full px-4 py-2 bg-background border border-border rounded text-text focus:outline-none focus:border-primary"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-700 mb-2 font-medium">Content</label>
+                <label className="block text-muted mb-2 font-medium">Content</label>
                 <textarea
                   value={announcementForm.content}
                   onChange={(e) => setAnnouncementForm({...announcementForm, content: e.target.value})}
-                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded text-gray-800 focus:outline-none focus:border-primary h-24"
+                  className="w-full px-4 py-2 bg-background border border-border rounded text-text focus:outline-none focus:border-primary h-24"
                   required
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-6 rounded"
+                  className="bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-6 rounded-lg"
                 >
                   Create
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowAnnouncementForm(false)}
-                  className="bg-surface border border-gray-300 hover:bg-gray-100 text-gray-800 font-semibold py-2 px-6 rounded"
+                  className="bg-surface border border-border hover:bg-background text-text font-semibold py-2 px-6 rounded-lg"
                 >
                   Cancel
                 </button>
@@ -336,45 +336,45 @@ export default function Admin() {
         )}
 
         {/* Reports Management */}
-        <div className="bg-surface p-6 rounded border border-gray-200 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="bg-surface p-6 rounded border border-border mb-8">
+          <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">⚠️</span>
             Reports Management
           </h2>
           
           {reports.length === 0 ? (
-            <div className="text-gray-600 text-center py-8">No reports yet</div>
+            <div className="text-muted text-center py-8">No reports yet</div>
           ) : (
             <div className="space-y-3">
               {reports.map(report => (
-                <div key={report.id} className="bg-white p-4 rounded border border-gray-200">
+                <div key={report.id} className="bg-background p-4 rounded border border-border">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="text-base font-semibold text-gray-800 mb-1">{report.resource_title}</h3>
-                      <p className="text-gray-600 text-sm mb-2">
+                      <h3 className="text-base font-semibold text-text mb-1">{report.resource_title}</h3>
+                      <p className="text-muted text-sm mb-2">
                         <span className="font-medium">Subject:</span> {report.subject_name} | 
                         <span className="font-medium"> Issue:</span> {report.issue_type.replace('_', ' ')}
                       </p>
                       {report.description && (
-                        <p className="text-gray-600 text-sm mb-2">{report.description}</p>
+                        <p className="text-muted text-sm mb-2">{report.description}</p>
                       )}
-                      <p className="text-gray-500 text-xs">
+                      <p className="text-border text-xs">
                         Reported by {report.reported_by_name} on {new Date(report.created_at).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="ml-4">
                       {report.status === 'pending' && (
-                        <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded">
+                        <span className="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-1 rounded">
                           Pending
                         </span>
                       )}
                       {report.status === 'resolved' && (
-                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
+                        <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">
                           Resolved
                         </span>
                       )}
                       {report.status === 'dismissed' && (
-                        <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                        <span className="bg-border text-muted text-xs px-2 py-1 rounded">
                           Dismissed
                         </span>
                       )}
@@ -384,13 +384,13 @@ export default function Admin() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleResolveReport(report.id)}
-                        className="bg-green-100 hover:bg-green-200 text-green-700 py-2 px-4 rounded text-sm font-medium"
+                        className="bg-green-500/20 hover:bg-green-500/30 text-green-400 py-2 px-4 rounded text-sm font-medium"
                       >
                         Resolve
                       </button>
                       <button
                         onClick={() => handleDismissReport(report.id)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded text-sm font-medium"
+                        className="bg-border hover:bg-surface text-muted py-2 px-4 rounded text-sm font-medium"
                       >
                         Dismiss
                       </button>
@@ -403,8 +403,8 @@ export default function Admin() {
         </div>
 
         {/* User Management */}
-        <div className="bg-surface p-6 rounded border border-gray-200 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="bg-surface p-6 rounded border border-border mb-8">
+          <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">👥</span>
             User Management
           </h2>
@@ -412,7 +412,7 @@ export default function Admin() {
           {loading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="bg-white p-4 rounded border border-gray-200 flex items-center justify-between">
+                <div key={i} className="bg-background p-4 rounded border border-border flex items-center justify-between">
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-5 w-1/3" />
                     <Skeleton className="h-4 w-1/2" />
@@ -426,20 +426,20 @@ export default function Admin() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-300">
-                    <th className="text-left text-gray-700 py-3 px-4 font-medium">Name</th>
-                    <th className="text-left text-gray-700 py-3 px-4 font-medium">Email</th>
-                    <th className="text-left text-gray-700 py-3 px-4 font-medium">Role</th>
-                    <th className="text-left text-gray-700 py-3 px-4 font-medium">Actions</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left text-muted py-3 px-4 font-medium">Name</th>
+                    <th className="text-left text-muted py-3 px-4 font-medium">Email</th>
+                    <th className="text-left text-muted py-3 px-4 font-medium">Role</th>
+                    <th className="text-left text-muted py-3 px-4 font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(userItem => (
-                    <tr key={userItem.id} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="text-gray-800 py-3 px-4 font-medium">{userItem.name}</td>
-                      <td className="text-gray-600 py-3 px-4">{userItem.email}</td>
+                    <tr key={userItem.id} className="border-b border-border hover:bg-background">
+                      <td className="text-text py-3 px-4 font-medium">{userItem.name}</td>
+                      <td className="text-muted py-3 px-4">{userItem.email}</td>
                       <td className="py-3 px-4">
-                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm capitalize">
+                        <span className="bg-border text-muted px-3 py-1 rounded text-sm capitalize">
                           {userItem.role}
                         </span>
                       </td>
@@ -448,7 +448,7 @@ export default function Admin() {
                           <select
                             value={userItem.role}
                             onChange={(e) => handleUpdateRole(userItem.id, e.target.value)}
-                            className="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800 text-sm focus:outline-none focus:border-primary"
+                            className="px-3 py-2 bg-background border border-border rounded text-text text-sm focus:outline-none focus:border-primary"
                           >
                             <option value="student">Student</option>
                             <option value="faculty">Faculty</option>
@@ -456,7 +456,7 @@ export default function Admin() {
                           </select>
                           <button
                             onClick={() => handleDeleteUser(userItem.id)}
-                            className="bg-red-100 hover:bg-red-200 text-red-600 py-2 px-4 rounded text-sm font-medium"
+                            className="bg-red-500/20 hover:bg-red-500/30 text-red-400 py-2 px-4 rounded text-sm font-medium"
                           >
                             Delete
                           </button>
@@ -471,20 +471,20 @@ export default function Admin() {
         </div>
 
         {/* Announcements List */}
-        <div className="bg-surface p-6 rounded border border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="bg-surface p-6 rounded border border-border">
+          <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">📢</span>
             Recent Announcements
           </h2>
           {announcements.length === 0 ? (
-            <div className="text-gray-600 text-center py-8">No announcements yet</div>
+            <div className="text-muted text-center py-8">No announcements yet</div>
           ) : (
             <div className="space-y-3">
               {announcements.map(announcement => (
-                <div key={announcement.id} className="bg-white p-4 rounded border border-gray-200">
-                  <h3 className="text-base font-semibold text-gray-800 mb-2">{announcement.title}</h3>
-                  <p className="text-gray-600 mb-2 text-sm">{announcement.content}</p>
-                  <p className="text-gray-500 text-xs">Posted by {announcement.created_by_name}</p>
+                <div key={announcement.id} className="bg-background p-4 rounded border border-border">
+                  <h3 className="text-base font-semibold text-text mb-2">{announcement.title}</h3>
+                  <p className="text-muted mb-2 text-sm">{announcement.content}</p>
+                  <p className="text-border text-xs">Posted by {announcement.created_by_name}</p>
                 </div>
               ))}
             </div>

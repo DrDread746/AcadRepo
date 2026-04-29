@@ -45,14 +45,14 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+      <nav className="bg-surface border-b border-border sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               {user && (
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="text-muted hover:text-text p-2 rounded-lg hover:bg-background transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -63,7 +63,7 @@ export default function Navbar() {
                 <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
                   <span className="text-white text-lg font-bold">A</span>
                 </div>
-                <span className="text-xl font-bold text-gray-900">AcadRepo</span>
+                <span className="text-xl font-bold text-text">AcadRepo</span>
               </Link>
             </div>
             
@@ -72,7 +72,7 @@ export default function Navbar() {
                 {/* Search Link */}
                 <Link
                   to="/search"
-                  className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="text-muted hover:text-text p-2 rounded-lg hover:bg-background transition-colors"
                   title="Search"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,13 +84,13 @@ export default function Navbar() {
                 <div className="relative">
                   <button 
                     onClick={() => setNotificationOpen(!notificationOpen)}
-                    className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors relative"
+                    className="text-muted hover:text-text p-2 rounded-lg hover:bg-background transition-colors relative"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
                     {announcements.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                         {announcements.length}
                       </span>
                     )}
@@ -98,19 +98,19 @@ export default function Navbar() {
                   
                   {/* Notification Dropdown */}
                   {notificationOpen && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg animate-fade-in">
-                      <div className="p-4 border-b border-gray-100">
-                        <h3 className="text-lg font-bold text-gray-900">Notifications</h3>
+                    <div className="absolute right-0 mt-2 w-80 bg-surface border border-border rounded-xl shadow-lg animate-fade-in">
+                      <div className="p-4 border-b border-border">
+                        <h3 className="text-lg font-bold text-text">Notifications</h3>
                       </div>
                       <div className="max-h-96 overflow-y-auto">
                         {announcements.length === 0 ? (
-                          <div className="p-4 text-gray-600 text-center">No notifications</div>
+                          <div className="p-4 text-muted text-center">No notifications</div>
                         ) : (
                           announcements.map((announcement) => (
-                            <div key={announcement.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                              <h4 className="text-gray-900 font-medium mb-1">{announcement.title}</h4>
-                              <p className="text-gray-600 text-sm line-clamp-2">{announcement.content}</p>
-                              <p className="text-gray-500 text-xs mt-2">Posted by {announcement.created_by_name}</p>
+                            <div key={announcement.id} className="p-4 border-b border-border hover:bg-background transition-colors">
+                              <h4 className="text-text font-medium mb-1">{announcement.title}</h4>
+                              <p className="text-muted text-sm line-clamp-2">{announcement.content}</p>
+                              <p className="text-border text-xs mt-2">Posted by {announcement.created_by_name}</p>
                             </div>
                           ))
                         )}
@@ -128,7 +128,7 @@ export default function Navbar() {
                       className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                         location.pathname === item.path
                           ? 'bg-primary text-white'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                          : 'text-muted hover:text-text hover:bg-background'
                       }`}
                     >
                       {item.name}
@@ -144,7 +144,7 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex gap-3">
-                <Link to="/login" className="text-gray-600 hover:text-gray-900 px-5 py-2 rounded-lg hover:bg-gray-100 font-medium transition-colors">
+                <Link to="/login" className="text-muted hover:text-text px-5 py-2 rounded-lg hover:bg-background font-medium transition-colors">
                   Login
                 </Link>
                 <Link to="/register" className="bg-primary hover:bg-primary-hover text-white px-6 py-2 rounded-lg font-medium transition-colors">
@@ -163,13 +163,13 @@ export default function Navbar() {
             className="fixed inset-0 bg-black/50"
             onClick={() => setSidebarOpen(false)}
           />
-          <div className="fixed left-0 top-0 h-full w-72 bg-white border-r border-gray-100 animate-slide-up">
+          <div className="fixed left-0 top-0 h-full w-72 bg-surface border-r border-border animate-slide-up">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
                   <span className="text-white text-lg font-bold">A</span>
                 </div>
-                <span className="text-xl font-bold text-gray-900">AcadRepo</span>
+                <span className="text-xl font-bold text-text">AcadRepo</span>
               </div>
               <nav className="space-y-2">
                 <Link
@@ -178,7 +178,7 @@ export default function Navbar() {
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
                     location.pathname === '/search'
                       ? 'bg-primary text-white'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      : 'text-muted hover:text-text hover:bg-background'
                   }`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ export default function Navbar() {
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${
                       location.pathname === item.path
                         ? 'bg-primary text-white'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                        : 'text-muted hover:text-text hover:bg-background'
                     }`}
                   >
                     <span className="font-medium">{item.name}</span>
@@ -202,7 +202,7 @@ export default function Navbar() {
                 ))}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium transition-colors"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg text-muted hover:text-text hover:bg-background font-medium transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
