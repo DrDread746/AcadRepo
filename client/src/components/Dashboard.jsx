@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [showReportModal, setShowReportModal] = useState(false)
   const [reportResource, setReportResource] = useState(null)
   const [reportForm, setReportForm] = useState({ issue_type: 'broken_link', description: '' })
+  const [userReceipts, setUserReceipts] = useState([])
   const token = localStorage.getItem('token')
 
   useEffect(() => {
@@ -22,6 +23,9 @@ export default function Dashboard() {
     fetchResources()
     fetchAnnouncements()
     fetchAnalytics()
+    if (token) {
+      fetchUserReceipts()
+    }
   }, [])
 
   const fetchStats = async () => {
@@ -29,8 +33,8 @@ export default function Dashboard() {
       const response = await fetch('http://localhost:5001/api/resources/stats')
       const data = await response.json()
       setStats(data)
-    } catch (error) {
-      console.error('Error fetching stats:', error)
+    } catch (err) {
+      console.error('Error fetching stats:', err)
     }
   }
 
@@ -39,8 +43,8 @@ export default function Dashboard() {
       const response = await fetch('http://localhost:5001/api/resources/analytics')
       const data = await response.json()
       setAnalytics(data)
-    } catch (error) {
-      console.error('Error fetching analytics:', error)
+    } catch (err) {
+      console.error('Error fetching analytics:', err)
     }
   }
 
@@ -50,8 +54,8 @@ export default function Dashboard() {
       const response = await fetch('http://localhost:5001/api/resources?verified=true')
       const data = await response.json()
       setResources(data)
-    } catch (error) {
-      console.error('Error fetching resources:', error)
+    } catch (err) {
+      console.error('Error fetching resources:', err)
     } finally {
       setLoading(false)
     }
@@ -62,14 +66,57 @@ export default function Dashboard() {
       const response = await fetch('http://localhost:5001/api/admin/announcements')
       const data = await response.json()
       setAnnouncements(data)
-    } catch (error) {
-      console.error('Error fetching announcements:', error)
+    } catch (err) {
+      console.error('Error fetching announcements:', err)
     }
   }
 
-  const handleDownload = (resource) => {
-    const url = resource.file_path ? `http://localhost:5001${resource.file_path}` : resource.file_url
-    window.open(url, '_blank')
+  const fetchUserReceipts = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/receipts/my-receipts', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setUserReceipts(data)
+      }
+    } catch (err) {
+      console.error('Error retrieving user purchase logs:', err)
+    }
+  }
+
+  // Modified tracking download handler method to ensure real-time analytics aggregation increments cleanly
+  const handleDownload = async (resource) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/resources/${resource.id}/download`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Direct download execution using structured server response payload strings
+        window.open(data.downloadUrl, '_blank');
+        
+        // Refresh structural metrics state counters synchronously across dashboards layout
+        fetchStats();
+        fetchAnalytics();
+        fetchResources();
+      } else {
+        error(data.error || 'Download tracking event failed registration parameters');
+      }
+    } catch (err) {
+      console.error('Download interaction engine failure context error:', err);
+      error('Could not fulfill file download routing safely');
+    }
+  }
+
+  const downloadExistingReceiptPdf = (receiptId) => {
+    window.open(`http://localhost:5001/api/receipts/${receiptId}/pdf`, '_blank')
   }
 
   const handlePreview = (resource) => {
@@ -115,8 +162,8 @@ export default function Dashboard() {
         const data = await response.json()
         error('Error: ' + data.error)
       }
-    } catch (error) {
-      console.error('Report error:', error)
+    } catch (err) {
+      console.error('Report error:', err)
       error('Report submission failed')
     }
   }
@@ -124,14 +171,12 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen px-4 py-8 bg-background">
       <div className="max-w-7xl mx-auto">
-        {/* Breadcrumb */}
         <nav className="text-muted mb-6">
           <a href="/" className="hover:text-primary">Home</a>
           <span className="mx-2 text-border">/</span>
           <span className="text-text">Dashboard</span>
         </nav>
 
-        {/* Welcome Message */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-text mb-2">
             Welcome back, {user?.name}!
@@ -139,7 +184,6 @@ export default function Dashboard() {
           <p className="text-muted">Here's what's happening with your resources today.</p>
         </div>
 
-        {/* Search Bar */}
         <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
           <div className="flex gap-4">
             <div className="relative flex-1">
@@ -164,7 +208,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-surface p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between mb-4">
@@ -201,7 +244,30 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Analytics Section */}
+        {userReceipts.length > 0 && (
+          <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
+            <h2 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+              <span>🧾</span> My Active Book Purchases & PDF Receipts
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {userReceipts.map((rec) => (
+                <div key={rec.id} className="p-4 bg-background border border-border rounded-lg flex justify-between items-center">
+                  <div className="truncate pr-2">
+                    <p className="text-sm font-semibold text-text truncate">{rec.book_title}</p>
+                    <p className="font-mono text-xs text-primary mt-1">{rec.receipt_number}</p>
+                  </div>
+                  <button
+                    onClick={() => downloadExistingReceiptPdf(rec.id)}
+                    className="shrink-0 bg-primary/20 hover:bg-primary/30 border border-primary text-primary px-3 py-1.5 rounded text-xs font-semibold transition"
+                  >
+                    PDF Receipt
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-surface p-6 rounded-xl shadow-lg border border-border">
             <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
@@ -245,7 +311,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Resource List */}
         <div className="bg-surface p-6 rounded-xl shadow-lg border border-border mb-8">
           <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
             <span className="text-2xl">📖</span>
@@ -300,26 +365,28 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handlePreview(resource)}
-                      className="flex-1 bg-surface hover:bg-border text-text py-2 px-3 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Preview
-                    </button>
-                    <button
-                      onClick={() => handleDownload(resource)}
-                      className="flex-1 bg-primary hover:bg-primary-hover text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Download
-                    </button>
-                    <button
-                      onClick={() => handleReport(resource)}
-                      className="bg-red-500/20 hover:bg-red-500/30 text-red-400 py-2 px-3 rounded-lg text-sm transition-colors"
-                      title="Report Issue"
-                    >
-                      ⚠️
-                    </button>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handlePreview(resource)}
+                        className="flex-1 bg-surface hover:bg-border text-text py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Preview
+                      </button>
+                      <button
+                        onClick={() => handleDownload(resource)}
+                        className="flex-1 bg-primary hover:bg-primary-hover text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Download
+                      </button>
+                      <button
+                        onClick={() => handleReport(resource)}
+                        className="bg-red-500/20 hover:bg-red-500/30 text-red-400 py-2 px-3 rounded-lg text-sm transition-colors"
+                        title="Report Issue"
+                      >
+                        ⚠️
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -327,7 +394,6 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Announcements Section */}
         {announcements.length > 0 && (
           <div className="bg-surface p-6 rounded border border-border">
             <h2 className="text-2xl font-bold text-text mb-4 flex items-center gap-2">
@@ -346,7 +412,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* PDF Preview Modal */}
         {showPreview && previewResource && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-surface rounded-lg w-full max-w-6xl h-[90vh] flex flex-col">
@@ -373,7 +438,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Report Modal */}
         {showReportModal && reportResource && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg w-full max-w-md">

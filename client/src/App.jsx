@@ -9,6 +9,7 @@ import Admin from './components/Admin'
 import Research from './components/Research'
 import Profile from './components/Profile'
 import Search from './components/Search'
+import BookAnalytics from './components/BookAnalytics' // New Component
 import { ToastProvider } from './context/ToastContext'
 import { ConfirmProvider } from './context/ConfirmContext'
 
@@ -29,6 +30,10 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/research" element={<Research />} />
               <Route path="/profile" element={<Profile />} />
+              
+              {/* New Route for Book Analytics and Receipts */}
+              <Route path="/analytics" element={<BookAnalytics />} />
+              
             </Routes>
           </div>
         </Router>

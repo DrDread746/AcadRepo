@@ -7,6 +7,7 @@ import resourceRoutes from './routes/resources.js';
 import adminRoutes from './routes/admin.js';
 import researchRoutes from './routes/research.js';
 import reportRoutes from './routes/reports.js';
+import receiptRoutes from './routes/receipts.js'; // Added receipt routing module
 dotenv.config();
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/resources', resourceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/research', researchRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/receipts', receiptRoutes); // Mounted new receipt and analytics endpoints
 
 // Start server
 app.listen(PORT, () => {

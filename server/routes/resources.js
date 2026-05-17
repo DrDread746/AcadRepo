@@ -221,5 +221,44 @@ router.get('/subjects', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+// Add this route near the bottom of server/routes/resources.js, just above "export default router;"
 
+// Track downloading action, increment resource statistics counter, and log user activity history
+router.post('/:id/download', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.user.id;
+
+    // 1. Check if the requested academic resource exists
+    const resourceCheck = await pool.query('SELECT * FROM resources WHERE id = $1', [id]);
+    if (resourceCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Academic resource item not found' });
+    }
+
+    const resource = resourceCheck.rows[0];
+
+    // 2. Increment the downloads counter inside the resources table
+    await pool.query(
+      'UPDATE resources SET downloads_count = downloads_count + 1 WHERE id = $1',
+      [id]
+    );
+
+    // 3. Log an immutable audit entry inside the historic downloads table tracking relation
+    await pool.query(
+      'INSERT INTO downloads (user_id, resource_id) VALUES ($1, $2)',
+      [user_id, id]
+    );
+
+    // 4. Return the specific path configuration parameters so the frontend can dispatch the download pipeline safely
+    const file_url = resource.file_path ? `http://localhost:5001${resource.file_path}` : resource.file_url;
+
+    res.json({
+      message: 'Resource download tracked and counter updated successfully',
+      downloadUrl: file_url
+    });
+  } catch (error) {
+    console.error('Resource incrementation tracker route execution failed:', error);
+    res.status(500).json({ error: 'Server could not record download metrics' });
+  }
+});
 export default router;

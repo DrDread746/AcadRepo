@@ -9,8 +9,10 @@ export default function Navbar() {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = localStorage.getItem('token')
 
+  // Updated navigation routes structure configuration parameters matrix to register analytics page link access route options mapping
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', roles: ['student', 'faculty', 'admin'] },
+    { name: 'Analytics', path: '/analytics', roles: ['student', 'faculty', 'admin'] },
     { name: 'Faculty', path: '/faculty', roles: ['faculty', 'admin'] },
     { name: 'Admin', path: '/admin', roles: ['admin'] },
     { name: 'Research', path: '/research', roles: ['student', 'faculty', 'admin'] },
@@ -69,7 +71,6 @@ export default function Navbar() {
             
             {user ? (
               <div className="flex items-center gap-4">
-                {/* Search Link */}
                 <Link
                   to="/search"
                   className="text-muted hover:text-text p-2 rounded-lg hover:bg-background transition-colors"
@@ -80,7 +81,6 @@ export default function Navbar() {
                   </svg>
                 </Link>
                 
-                {/* Notification Button with Dropdown */}
                 <div className="relative">
                   <button 
                     onClick={() => setNotificationOpen(!notificationOpen)}
@@ -96,7 +96,6 @@ export default function Navbar() {
                     )}
                   </button>
                   
-                  {/* Notification Dropdown */}
                   {notificationOpen && (
                     <div className="absolute right-0 mt-2 w-80 bg-surface border border-border rounded-xl shadow-lg animate-fade-in">
                       <div className="p-4 border-b border-border">
@@ -119,7 +118,6 @@ export default function Navbar() {
                   )}
                 </div>
                 
-                {/* Desktop Navigation */}
                 <div className="hidden lg:flex items-center gap-1">
                   {filteredNavItems.map((item) => (
                     <Link
@@ -156,7 +154,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden animate-fade-in">
           <div 
